@@ -55,3 +55,15 @@ public struct Highlight {
         return strings
     }
 }
+extension Highlight.WordType: Equatable {}
+public func ==(lhs: Highlight.WordType, rhs: Highlight.WordType) -> Bool {
+    switch (lhs, rhs) {
+    case (let .Normal(wordL), let .Normal(wordR)):
+        return wordL == wordR
+        
+    case (let .Highlighted(wordL), let .Highlighted(wordR)):
+        return wordL == wordR
+    default:
+        return false
+    }
+}
