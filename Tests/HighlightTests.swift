@@ -11,26 +11,36 @@ import XCTest
 
 class HighlightTests: XCTestCase {
     
-    override func setUp() {
-        super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+    func testHighlight() {
+        let highlight = Highlight(string: "@boy Hello, world.")
+        let result    = highlight.extract(tagPattern: "@[a-zA-Z0-9_-]*?\\s")
+        XCTAssert(result.count == 2)
+        XCTAssert(result[0] == .Highlighted("@boy "))
+        XCTAssert(result[1] == .Normal("Hello, world."))
     }
     
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-        super.tearDown()
+    func testMultipleHighlights() {
+        let highlight = Highlight(string: "@boy Good morning. @girl Good night.")
+        let result    = highlight.extract(tagPattern: "@[a-zA-Z0-9_-]*?\\s")
+        XCTAssert(result.count == 4)
+        XCTAssert(result[0] == .Highlighted("@boy "))
+        XCTAssert(result[1] == .Normal("Good morning. "))
+        XCTAssert(result[2] == .Highlighted("@girl "))
+        XCTAssert(result[3] == .Normal("Good night."))
     }
     
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    func testEmpty() {
+        let highlight = Highlight(string: "")
+        let result    = highlight.extract(tagPattern: "@[a-zA-Z0-9_-]*?\\s")
+        XCTAssert(result.count == 1)
+        XCTAssert(result[0] == .Normal(""))
     }
     
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measureBlock {
-            // Put the code you want to measure the time of here.
-        }
+    func testNotMatch() {
+        let highlight = Highlight(string: "Hello, world.")
+        let result    = highlight.extract(tagPattern: "@[a-zA-Z0-9_-]*?\\s")
+        XCTAssert(result.count == 1)
+        XCTAssert(result[0] == .Normal("Hello, world."))
     }
     
 }
